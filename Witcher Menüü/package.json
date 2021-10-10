@@ -1,0 +1,31 @@
+{
+  "name": "witcher-menu-altyapi",
+  "version": "1.0.0",
+  "description": "Witcher menü altyapısıdır.",
+  "main": "witcher.js",
+  "scripts": {
+    "test": "node witcher.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheWTCHR/dcjs-menu-altyapi.git"
+  },
+  "keywords": [
+    "witcheraltyapi",
+    "menualtyapi",
+    "witchermenu",
+    "witcher",
+    "menüsistemi",
+    "lamina",
+    "menusystem"
+  ],
+  "author": "Witcher",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheWTCHR/dcjs-menu-altyapi/issues"
+  },
+  "homepage": "https://github.com/TheWTCHR/dcjs-menu-altyapi#readme",
+  "dependencies": {
+    "discord.js": "^13.2.0"
+  }
+}
