@@ -1,5 +1,5 @@
-const { Client, Intents,Collection } = require('discord.js');
-const { MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { Client, Intents,Collection, interaction, MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { on } = require('events');
 const fs = require('fs')
 const config = require("./config.js")
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING ] });// intentler detayları djs guide adresinde daha iyi bulursunuz.
@@ -43,34 +43,36 @@ client.on('messageCreate', async message => {
 		const m = await message.channel.send({  content: 'Grup seçiniz.',components: [menu] });
 					
 		const collector = m.createMessageComponentCollector({ filter: w=>w.user.id===message.author.id })
-
-		collector.on('collect', async w => {
-			if(w.values[0] === 'witcher' || w.values[1] === 'witcher'){
-			if(w.member.roles.cache.has(config.Roles.laminaRol)) {
-				w.reply({content: `Birden fazla gruba dahil olamazsın.`, ephemeral: true})
-			} else {
-				if(w.member.roles.cache.has(config.Roles.witcherRol)) {
-				w.member.roles.remove(config.Roles.witcherRol)
-				w.reply({content: `Başarıyla \`Witcher\` grubundan ayrıldın.`, ephemeral: true})
-				} else {
-					w.member.roles.add(config.Roles.witcherRol)
-					w.reply({content: `Başarıyla \`Witcher\` grubuna katıldın.`, ephemeral: true})
-				}
-			}}
-			if(w.values[0] === 'lamina' || w.values[1] === 'lamina'){
-			if(w.member.roles.cache.has(config.Roles.witcherRol)) {
-				w.reply({content: `Birden fazla gruba dahil olamazsın.`, ephemeral: true})
-			} else {
-				if(w.member.roles.cache.has(config.Roles.laminaRol)) {
-					w.member.roles.remove(config.Roles.laminaRol)
-					w.reply({content: `Başarıyla \`Lâmina\` grubundan ayrıldın.`, ephemeral: true})
-				} else {
-					w.member.roles.add(config.Roles.laminaRol)
-					w.reply({content: `Tebrikler! \`Lâmina\` grubuna dahil oldun.`, ephemeral: true})
-				}
-			}}
-		})
 	};
 });
+
+client.on("interactionCreate", async(interaction) => {
+	if(interaction.values[0] === 'witcher' || interaction.values[1] === 'witcher'){
+		if(!interaction.member.roles.cache.has(config.Roles.laminaRol)){
+			if(!interaction.member.roles.cache.has(config.Roles.witcherRol)) {
+				await interaction.member.roles.add(config.Roles.witcherRol).catch(err => {})
+				await interaction.reply({content: 'Başarıyla \`witcher\` grubuna katıldın.', ephemeral: true})
+			} else {
+				await interaction.member.roles.remove(config.Roles.witcherRol).catch(err => {})
+			    await interaction.reply({content: 'Başarıyla \`witcher\` grubundan ayrıldın.', ephemeral: true})
+			}
+		} else {
+			await interaction.reply({content: 'Birden fazla gruba dahil olamazsın.', ephemeral: true})
+		}
+	} else {
+		if(!interaction.member.roles.cache.has(config.Roles.witcherRol)){
+			if(!interaction.member.roles.cache.has(config.Roles.laminaRol)){
+				await interaction.member.roles.add(config.Roles.laminaRol).catch(err => {})
+				await interaction.reply({content: 'Başarıyla \`lâmina\` grubuna katıldın.', ephemeral: true})
+			} else {
+				await interaction.member.roles.remove(config.Roles.laminaRol).catch(err => {})
+				await interaction.reply({content: 'Başarıyla \`lâmina\` grubundan ayrıldın.', ephemeral: true})
+			}
+		} else {
+			await interaction.reply({content: 'Birden fazla gruba dahil olamazsın.', ephemeral: true})
+		}
+	}
+
+}) 
 
 client.login(config.Bots.token)
